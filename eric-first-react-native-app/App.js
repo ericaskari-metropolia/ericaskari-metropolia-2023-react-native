@@ -1,12 +1,11 @@
 import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
-import {List} from './components/List';
-import {mediaArray} from './datasource';
+import {Navigator} from './navigators/Navigator';
 
 const App = () => {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <List items={mediaArray} />
+        <Navigator />
       </SafeAreaView>
       <StatusBar style="auto" />
     </>

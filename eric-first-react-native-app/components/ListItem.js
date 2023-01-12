@@ -1,9 +1,16 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
 
-export const ListItem = ({item}) => {
+export const ListItem = ({item, navigation}) => {
   return (
-    <TouchableOpacity style={{display: 'flex', padding: 10}}>
+    <TouchableOpacity
+      style={{display: 'flex', padding: 10}}
+      onPress={() => {
+        navigation.navigate('Single', {
+          item,
+        });
+      }}
+    >
       <View
         style={[
           {

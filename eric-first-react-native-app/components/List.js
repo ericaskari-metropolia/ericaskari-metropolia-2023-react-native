@@ -3,7 +3,7 @@ import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import {ListItem} from './ListItem';
 import {useAssets} from 'expo-asset';
 
-export const List = ({items}) => {
+export const List = ({items, navigation}) => {
   const [assets, error] = useAssets([
     require('../assets/kitten.jpg'),
     require('../assets/settings.png'),
@@ -63,7 +63,7 @@ export const List = ({items}) => {
               </Text>
             </View>
           ) : (
-            <ListItem item={item} />
+            <ListItem navigation={navigation} item={item} />
           )
         }
       />
