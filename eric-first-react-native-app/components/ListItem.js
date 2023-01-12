@@ -1,7 +1,7 @@
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
 
-export const ListItem = ({item}) => {
+export const ListItem = ({item, uriBuilder}) => {
   return (
     <TouchableOpacity style={{display: 'flex'}}>
       <View
@@ -17,7 +17,7 @@ export const ListItem = ({item}) => {
         <View style={[{flexDirection: 'row', padding: 10}]}>
           <Image
             style={{width: 100, height: 100}}
-            source={{uri: item.thumbnails.w160}}
+            source={{uri: uriBuilder(item.thumbnails.w160)}}
           />
         </View>
         <View style={[{flexDirection: 'column'}]}>
