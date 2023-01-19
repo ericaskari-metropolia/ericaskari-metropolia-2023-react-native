@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Text,
-  Image,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import {AsyncImage} from '../components/AsyncImage';
 
 export const Single = ({route, navigation}) => {
