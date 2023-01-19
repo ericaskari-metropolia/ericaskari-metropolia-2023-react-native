@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export const ListItem = ({item, navigation}) => {
   return (
     <TouchableOpacity
-      style={{display: 'flex', padding: 10}}
+      style={{display: 'flex', paddingVertical: 10}}
       onPress={() => {
         navigation.navigate('Single', {
           item,
@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     flex: 1,
-    fontSize: '22px',
+    fontSize: 22,
     color: 'rgb(255,255,255)',
-    borderRadius: '10px',
-    borderBottomLeftRadius: '60px',
+    borderRadius: 10,
+    borderBottomLeftRadius: 60,
   },
   titleText: {
-    fontSize: '22px',
+    fontSize: 22,
     color: 'rgb(255,255,255)',
   },
   descriptionText: {
