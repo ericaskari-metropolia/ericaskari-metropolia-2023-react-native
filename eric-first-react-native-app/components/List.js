@@ -1,5 +1,6 @@
 import {FlatList, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import {ListItem} from './ListItem';
+import {Settings} from 'react-native-feather';
 
 export const List = ({items, navigation}) => {
   return (
@@ -24,6 +25,16 @@ export const List = ({items, navigation}) => {
             >
               Homeless Kittens
             </Text>
+            <Settings
+              width={32}
+              height={32}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                color: 'white',
+              }}
+            />
           </>
         }
         style={{backgroundColor: '#202028'}}
