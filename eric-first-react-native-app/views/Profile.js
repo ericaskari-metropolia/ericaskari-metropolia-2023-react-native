@@ -16,11 +16,12 @@ export const Profile = ({ navigation }) => {
     }, [isLoggedIn]);
 
     const logout = () => {
-        setIsLoggedIn(false);
+        setIsLoggedIn(null);
     };
     return (
         <SafeAreaView style={styles.container}>
             <Text>Profile</Text>
+            <Text>{JSON.stringify(isLoggedIn, undefined, 2)}</Text>
             <Button title={'Logout'} onPress={logout} />
         </SafeAreaView>
     );

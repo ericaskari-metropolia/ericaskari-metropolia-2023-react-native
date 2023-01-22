@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 const MainContext = React.createContext([]);
 
-const MainContextProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+const MainContextProvider = ({ children, localStorageData }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(localStorageData ?? null);
 
     return (
         <MainContext.Provider value={[isLoggedIn, setIsLoggedIn]}>
