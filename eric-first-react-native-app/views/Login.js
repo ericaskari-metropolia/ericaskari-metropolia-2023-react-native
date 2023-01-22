@@ -1,11 +1,20 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { Button, Dimensions, StyleSheet, TextInput, View } from 'react-native';
+import {
+    Button,
+    Dimensions,
+    Platform,
+    StyleSheet,
+    TextInput,
+    ToastAndroid,
+    View,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
+import AlertIOS from 'react-native/Libraries/Alert/Alert';
 
 export const Login = ({ navigation }) => {
     const [isLoggedIn, setIsLoggedIn] = useContext(MainContext);
@@ -17,7 +26,7 @@ export const Login = ({ navigation }) => {
     } = useForm({
         defaultValues: {
             username: 'ericaska',
-            password: 'Hashem741',
+            password: 'ericaskaa',
         },
     });
 
@@ -38,13 +47,20 @@ export const Login = ({ navigation }) => {
             username,
             password,
         });
-
-        if (!error) {
-            setIsLoggedIn({
-                token: body.token,
-                user: body.user,
-            });
+        console.log(body);
+        if (error) {
+            if (Platform.OS === 'android') {
+                ToastAndroid.show(error.message, ToastAndroid.SHORT);
+            } else {
+                AlertIOS.alert(error.message);
+            }
+            return;
         }
+
+        setIsLoggedIn({
+            token: body.token,
+            user: body.user,
+        });
     }, []);
 
     return (
@@ -110,6 +126,7 @@ export const Login = ({ navigation }) => {
             />
 
             <Button title="Login" onPress={handleSubmit(onSubmit)} />
+            <Button title="Register" onPress={() => navigation.navigate('Register')} />
         </View>
     );
 };
