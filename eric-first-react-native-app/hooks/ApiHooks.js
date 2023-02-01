@@ -1,6 +1,46 @@
 const baseUrl = 'https://media.mw.metropolia.fi/wbma';
 
 export const useAuthentication = () => {
+    const getFilesByTag = async ({ tag }) => {
+        const headers = new Headers();
+        headers.append('Accept', 'application/json');
+        headers.append('Content-Type', 'application/json');
+
+        try {
+            const response = await fetch(baseUrl + `/tags/${tag}`, {
+                method: 'GET',
+                headers,
+            });
+
+            if (response.ok) {
+                return [await response.json(), null, response.status];
+            } else {
+                return [null, await response.json(), response.status];
+            }
+        } catch (error) {
+            return [null, error, 0];
+        }
+    };
+    const getMediaById = async ({ mediaId }) => {
+        const headers = new Headers();
+        headers.append('Accept', 'application/json');
+        headers.append('Content-Type', 'application/json');
+
+        try {
+            const response = await fetch(baseUrl + `/media/${mediaId}`, {
+                method: 'GET',
+                headers,
+            });
+
+            if (response.ok) {
+                return [await response.json(), null, response.status];
+            } else {
+                return [null, await response.json(), response.status];
+            }
+        } catch (error) {
+            return [null, error, 0];
+        }
+    };
     const postLogin = async ({ username, password }) => {
         const headers = new Headers();
         headers.append('Accept', 'application/json');
@@ -60,5 +100,15 @@ export const useAuthentication = () => {
         }
     };
 
-    return { postLogin: postLogin, postRegister: postRegister };
+    const getMediaUrlByFileName = ({ fileName }) => {
+        return `${baseUrl}/uploads/${fileName}`;
+    };
+
+    return {
+        postLogin: postLogin,
+        postRegister: postRegister,
+        getFilesByTag: getFilesByTag,
+        getMediaById: getMediaById,
+        getMediaUrlByFileName: getMediaUrlByFileName,
+    };
 };

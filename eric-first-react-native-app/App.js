@@ -16,7 +16,10 @@ const App = () => {
             const profile = await AsyncStorage.getItem('userProfile');
             setLoadedStorageData({
                 loaded: true,
-                data: token && profile ? { token, profile } : null,
+                data:
+                    token && profile
+                        ? { token, profile: JSON.parse(profile) }
+                        : null,
             });
         })();
     }, []);
