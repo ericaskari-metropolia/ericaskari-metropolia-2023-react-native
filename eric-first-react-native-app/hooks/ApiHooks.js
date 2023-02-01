@@ -1,17 +1,9 @@
 const baseUrl = 'https://media.mw.metropolia.fi/wbma';
 
 export const useAuthentication = () => {
-    const getFilesByTag = async ({ tag }) => {
-        const headers = new Headers();
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
-
+    const handleResponse = async (fetch) => {
         try {
-            const response = await fetch(baseUrl + `/tags/${tag}`, {
-                method: 'GET',
-                headers,
-            });
-
+            const response = await fetch();
             if (response.ok) {
                 return [await response.json(), null, response.status];
             } else {
@@ -20,60 +12,49 @@ export const useAuthentication = () => {
         } catch (error) {
             return [null, error, 0];
         }
+    };
+
+    const getFilesByTag = async ({ tag }) => {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            return await fetch(baseUrl + `/tags/${tag}`, {
+                method: 'GET',
+                headers,
+            });
+        });
     };
     const getMediaById = async ({ mediaId }) => {
-        const headers = new Headers();
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
-
-        try {
-            const response = await fetch(baseUrl + `/media/${mediaId}`, {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            return await fetch(baseUrl + `/media/${mediaId}`, {
                 method: 'GET',
                 headers,
             });
-
-            if (response.ok) {
-                return [await response.json(), null, response.status];
-            } else {
-                return [null, await response.json(), response.status];
-            }
-        } catch (error) {
-            return [null, error, 0];
-        }
+        });
     };
     const postLogin = async ({ username, password }) => {
-        const headers = new Headers();
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
-        try {
-            const response = await fetch(baseUrl + '/login', {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            return await fetch(baseUrl + '/login', {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers,
             });
-
-            const json = await response.json();
-
-            return {
-                body: response.ok ? json : null,
-                error: response.ok ? null : json,
-                status: response.status,
-            };
-        } catch (error) {
-            return {
-                body: null,
-                error: error,
-                status: 0,
-            };
-        }
+        });
     };
 
     const postRegister = async ({ username, password, email, fullName }) => {
-        const headers = new Headers();
-        headers.append('Accept', 'application/json');
-        headers.append('Content-Type', 'application/json');
-        try {
-            const response = await fetch(baseUrl + '/users', {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            return await fetch(baseUrl + '/users', {
                 method: 'POST',
                 body: JSON.stringify({
                     username,
@@ -83,21 +64,19 @@ export const useAuthentication = () => {
                 }),
                 headers,
             });
+        });
+    };
 
-            const json = await response.json();
-
-            return {
-                body: response.ok ? json : null,
-                error: response.ok ? null : json,
-                status: response.status,
-            };
-        } catch (error) {
-            return {
-                body: null,
-                error: error,
-                status: 0,
-            };
-        }
+    const checkUsername = async ({ username }) => {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            return await fetch(baseUrl + `/users/username/${username}`, {
+                method: 'GET',
+                headers,
+            });
+        });
     };
 
     const getMediaUrlByFileName = ({ fileName }) => {
@@ -110,5 +89,6 @@ export const useAuthentication = () => {
         getFilesByTag: getFilesByTag,
         getMediaById: getMediaById,
         getMediaUrlByFileName: getMediaUrlByFileName,
+        checkUsername: checkUsername,
     };
 };

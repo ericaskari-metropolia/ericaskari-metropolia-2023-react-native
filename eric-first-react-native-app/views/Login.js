@@ -36,7 +36,7 @@ export const Login = ({ navigation }) => {
     }, [isLoggedIn]);
 
     const onSubmit = useCallback(async ({ username, password }) => {
-        const { body, error } = await postLogin({
+        const [body, error] = await postLogin({
             username,
             password,
         });
