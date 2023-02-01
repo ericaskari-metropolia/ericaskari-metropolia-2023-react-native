@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 import React from 'react';
 
 export const TextInputError = ({ fieldState: { invalid, error } }) => {
@@ -12,8 +12,3 @@ export const TextInputError = ({ fieldState: { invalid, error } }) => {
         </Text>
     );
 };
-const styles = StyleSheet.create({
-    bgImage: {
-        height: 300,
-    },
-});

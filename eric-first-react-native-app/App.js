@@ -1,8 +1,9 @@
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StatusBar } from 'react-native';
 import { Navigator } from './navigators/Navigator';
 import { MainContextProvider } from './contexts/MainContext';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const App = () => {
     const [loadedStorageData, setLoadedStorageData] = useState({
@@ -26,7 +27,7 @@ const App = () => {
 
     return (
         <>
-            <SafeAreaView style={styles.container}>
+            <SafeAreaProvider>
                 {loadedStorageData.loaded && (
                     <MainContextProvider
                         localStorageData={loadedStorageData.data}
@@ -34,16 +35,10 @@ const App = () => {
                         <Navigator />
                     </MainContextProvider>
                 )}
-            </SafeAreaView>
+            </SafeAreaProvider>
             <StatusBar style="auto" />
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});
 
 export default App;

@@ -1,13 +1,5 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import {
-    Button,
-    Dimensions,
-    Platform,
-    StyleSheet,
-    TextInput,
-    ToastAndroid,
-    View,
-} from 'react-native';
+import { Platform, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +7,7 @@ import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
 import AlertIOS from 'react-native/Libraries/Alert/Alert';
+import { Button, Input } from '@rneui/themed';
 
 export const Login = ({ navigation }) => {
     const [isLoggedIn, setIsLoggedIn] = useContext(MainContext);
@@ -25,8 +18,8 @@ export const Login = ({ navigation }) => {
         formState: { errors, isSubmitted, isDirty },
     } = useForm({
         defaultValues: {
-            username: 'ericaska',
-            password: 'ericaskaa',
+            username: 'ericaska2',
+            password: 'Hashem741',
         },
     });
 
@@ -64,7 +57,7 @@ export const Login = ({ navigation }) => {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <View>
             <Controller
                 control={control}
                 rules={{
@@ -78,11 +71,10 @@ export const Login = ({ navigation }) => {
                     fieldState: { invalid, error },
                 }) => (
                     <>
-                        <TextInput
+                        <Input
                             placeholder="Username"
                             textContentType="username"
                             autoCapitalize={false}
-                            style={styles.input}
                             onBlur={onBlur}
                             onChangeText={onChange}
                             value={value}
@@ -110,9 +102,8 @@ export const Login = ({ navigation }) => {
                     fieldState: { invalid, error },
                 }) => (
                     <>
-                        <TextInput
+                        <Input
                             placeholder="Password"
-                            style={styles.input}
                             textContentType="password"
                             autoCapitalize={false}
                             onBlur={onBlur}
@@ -126,27 +117,13 @@ export const Login = ({ navigation }) => {
             />
 
             <Button title="Login" onPress={handleSubmit(onSubmit)} />
-            <Button title="Register" onPress={() => navigation.navigate('Register')} />
+            <Button
+                title="Register"
+                onPress={() => navigation.navigate('Register')}
+            />
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingTop: Dimensions.get('window').height / 4,
-        display: 'flex',
-        paddingHorizontal: 20,
-    },
-    input: {
-        padding: 20,
-        marginTop: 15,
-        marginBottom: 5,
-        backgroundColor: 'whitesmoke',
-        borderRadius: 10,
-    },
-});
 
 Login.propTypes = {
     navigation: PropTypes.object,

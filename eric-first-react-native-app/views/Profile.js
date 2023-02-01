@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Image, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { FlatList, SafeAreaView, Text } from 'react-native';
 import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthentication } from '../hooks/ApiHooks';
+import { Button, Image } from '@rneui/themed';
 
 export const Profile = ({ navigation }) => {
     const [isLoggedIn, setIsLoggedIn] = useContext(MainContext);
@@ -50,37 +51,42 @@ export const Profile = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView
+            style={{
+                width: '100%',
+                backgroundColor: 'rgba(0,0,0,0.34)',
+            }}
+        >
             <Text>Profile</Text>
-            {media?.thumbnails?.w160 && (
-                <Image
-                    source={{
-                        uri: getMediaUrlByFileName({
-                            fileName: media?.thumbnails?.w160,
-                        }),
-                    }}
-                    style={styles.cardImage}
-                />
-            )}
+            <FlatList
+                data={[
+                    getMediaUrlByFileName({
+                        fileName: media?.thumbnails?.w160,
+                    }),
+                ]}
+                style={{}}
+                numColumns={1}
+                keyExtractor={(e) => e}
+                renderItem={({ item }) => {
+                    console.log(item);
+                    return (
+                        <Image
+                            containerStyle={{
+                                aspectRatio: 1,
+                                width: '100%',
+                                height: '100%',
+                                flex: 1,
+                            }}
+                            source={{ uri: item }}
+                        />
+                    );
+                }}
+            />
 
-            <Text>Username: {isLoggedIn.profile.username}</Text>
-            <Text>Fullname: {isLoggedIn.profile.full_name}</Text>
-            <Text>Email: {isLoggedIn.profile.email}</Text>
+            <Text>Username: {isLoggedIn?.profile?.username ?? '-'}</Text>
+            <Text>Fullname: {isLoggedIn?.profile?.full_name ?? '-'}</Text>
+            <Text>Email: {isLoggedIn?.profile?.email ?? '-'}</Text>
             <Button title={'Logout'} onPress={logout} />
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 40,
-    },
-    cardImage: {
-        width: '100%',
-        height: '50%',
-    },
-});
