@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, SafeAreaView, Text } from 'react-native';
-import { MainContext } from '../contexts/MainContext';
+import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Button, Image } from '@rneui/themed';
 
 export const Profile = ({ navigation }) => {
-    const [userProfile, accessToken, setUserProfile, setAccessToken] =
-        useContext(MainContext);
+    const { userProfile, setUserProfile, setAccessToken } = useMainContext();
     const [media, setMedia] = useState(null);
     const { getFilesByTag, getMediaById, getMediaUrlByFileName } =
         useAuthentication();

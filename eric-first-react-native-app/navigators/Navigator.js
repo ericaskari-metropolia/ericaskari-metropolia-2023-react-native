@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,7 +6,7 @@ import { Home } from '../views/Home';
 import { Profile } from '../views/Profile';
 import { Single } from '../views/Single';
 import { Login } from '../views/Login';
-import { MainContext } from '../contexts/MainContext';
+import { useMainContext } from '../contexts/MainContext';
 import { Register } from '../views/Register';
 import { Upload } from '../views/Upload';
 
@@ -24,10 +24,10 @@ const TabScreen = () => {
 };
 
 const StackScreen = () => {
-    const [isLoggedIn] = useContext(MainContext);
+    const { userProfile } = useMainContext();
     return (
         <Stack.Navigator>
-            {isLoggedIn && (
+            {userProfile && (
                 <>
                     <Stack.Screen
                         name="Tabs"

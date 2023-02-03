@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Platform, ToastAndroid, View } from 'react-native';
-import { MainContext } from '../contexts/MainContext';
+import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
@@ -53,14 +53,7 @@ export const Upload = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [
-        userProfile,
-        accessToken,
-        setUserProfile,
-        setAccessToken,
-        needsUpdate,
-        setNeedsUpdate,
-    ] = useContext(MainContext);
+    const { accessToken, setNeedsUpdate } = useMainContext();
     const { uploadMedia } = useAuthentication();
     const { control, handleSubmit } = useForm({
         defaultValues: {

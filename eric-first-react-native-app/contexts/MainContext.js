@@ -1,10 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 /** @type {import('../types/types').AppContext} */
-const MainContext = React.createContext([]);
+const MainContext = React.createContext({
+    userProfile: null,
+    accessToken: null,
+    needsUpdate: true,
+    setAccessToken: () => {},
+    setNeedsUpdate: () => {},
+    setUserProfile: () => {},
+});
 
-const MainContextProvider = ({
+export const useMainContext = () => {
+    const context = useContext(MainContext);
+
+    return context;
+};
+export const MainContextProvider = ({
     children,
     defaultUserProfile,
     defaultAccessToken,
@@ -21,20 +33,20 @@ const MainContextProvider = ({
 
     return (
         <MainContext.Provider
-            value={[
+            value={{
                 userProfile,
                 accessToken,
-                (userProfile) => {
+                setUserProfile: (userProfile) => {
                     setUserProfile(userProfile);
                     onUserProfileSet(userProfile);
                 },
-                (accessToken) => {
+                setAccessToken: (accessToken) => {
                     setAccessToken(accessToken);
                     onAccessTokenSet(userProfile);
                 },
                 needsUpdate,
-                setNeedsUpdate,
-            ]}
+                setNeedsUpdate: (value) => setNeedsUpdate(value),
+            }}
         >
             {children}
         </MainContext.Provider>
@@ -44,5 +56,3 @@ const MainContextProvider = ({
 MainContextProvider.propTypes = {
     children: PropTypes.node,
 };
-
-export { MainContext, MainContextProvider };

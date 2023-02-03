@@ -1,18 +1,10 @@
 import { List } from '../components/List';
 import { SafeAreaView, View } from 'react-native';
-import { useContext } from 'react';
-import { MainContext } from '../contexts/MainContext';
+import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 
 export const Home = ({ navigation }) => {
-    const [
-        userProfile,
-        accessToken,
-        setUserProfile,
-        setAccessToken,
-        needsUpdate,
-        setNeedsUpdate,
-    ] = useContext(MainContext);
+    const { needsUpdate, setNeedsUpdate } = useMainContext();
     const { useMedia, getMediaUrlByFileName } = useAuthentication();
 
     const { mediaArray } = useMedia({

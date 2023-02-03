@@ -1,7 +1,7 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { Platform, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { MainContext } from '../contexts/MainContext';
+import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
@@ -9,8 +9,7 @@ import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
 
 export const Login = ({ navigation }) => {
-    const [userProfile, accessToken, setUserProfile, setAccessToken] =
-        useContext(MainContext);
+    const { setUserProfile, setAccessToken } = useMainContext();
     const { postLogin } = useAuthentication();
     const { control, handleSubmit } = useForm({
         defaultValues: {

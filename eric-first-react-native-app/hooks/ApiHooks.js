@@ -126,12 +126,15 @@ export const useAuthentication = () => {
     };
 
     const useMedia = ({ needsUpdate, setNeedsUpdate }) => {
+        const [isLoaded, setIsLoaded] = useState(false);
         const [mediaArray, setMediaArray] = useState([]);
 
         useEffect(() => {
-            if (!needsUpdate) {
+            if (!needsUpdate && isLoaded) {
                 return;
             }
+            console.log('Fetching Media');
+
             (async () => {
                 const [items, error] = await getMedia();
                 if (!error) {
@@ -145,6 +148,8 @@ export const useAuthentication = () => {
                         .map((x) => x[0])
                         .filter((x) => !!x);
                     setMediaArray(cleanList);
+                    setMediaArray(cleanList);
+                    setIsLoaded(true);
                     setNeedsUpdate(false);
                 } else {
                     //  TODO: Handle the error

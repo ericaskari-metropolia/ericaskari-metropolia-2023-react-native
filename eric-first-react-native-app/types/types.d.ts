@@ -27,14 +27,14 @@ type ISetUserModel = (userModel: IUserModel) => void;
 type ISetAccessToken = (accessToken: IAccessToken) => void;
 type ISetNeedsUpdate = (needsUpdateNewValue: boolean) => void;
 
-export type IMainContext = [
-    IUserModel | null,
-    IAccessToken | null,
-    ISetUserModel,
-    ISetAccessToken,
-    INeedsUpdate,
-    ISetNeedsUpdate
-];
+export type IMainContext = {
+    userProfile: IUserModel | null;
+    accessToken: IAccessToken | null;
+    setUserProfile: ISetUserModel;
+    setAccessToken: ISetAccessToken;
+    needsUpdate: INeedsUpdate;
+    setNeedsUpdate: ISetNeedsUpdate;
+};
 
 export type AppContext = Context<IMainContext>;
 export type ListComponent = (props: {
