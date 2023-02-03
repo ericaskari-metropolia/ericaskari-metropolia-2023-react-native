@@ -8,13 +8,14 @@ import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
 
 export const Register = ({ navigation }) => {
-    const { postRegister } = useAuthentication();
+    const { postRegister, checkUsername } = useAuthentication();
     const { control, handleSubmit } = useForm({
         defaultValues: {
-            username: 'ericaska',
-            password: 'ericaskaa',
-            fullName: 'Eric Askari',
-            email: 'ericsomething@gmail.com',
+            username: '',
+            password: '',
+            repeatPassword: '',
+            fullName: '',
+            email: '',
         },
     });
 
@@ -61,6 +62,25 @@ export const Register = ({ navigation }) => {
                         value: true,
                         message: 'This field is required.',
                     },
+                    minLength: {
+                        value: 4,
+                        message: 'Minimum 4 characters are required.',
+                    },
+                    maxLength: {
+                        value: 100,
+                        message: 'Maximum 100 characters are allowed.',
+                    },
+                    validate: async (username) => {
+                        const [data, error] = await checkUsername({
+                            username,
+                        });
+                        if (error) {
+                            return true;
+                        }
+                        return data?.available
+                            ? true
+                            : 'Username is already taken';
+                    },
                 }}
                 render={({
                     field: { onChange, onBlur, value },
@@ -84,13 +104,22 @@ export const Register = ({ navigation }) => {
             <Controller
                 control={control}
                 rules={{
+                    required: {
+                        value: true,
+                        message: 'This field is required.',
+                    },
+                    minLength: {
+                        value: 4,
+                        message: 'Minimum 4 characters are required.',
+                    },
                     maxLength: {
                         value: 100,
                         message: 'Maximum 100 characters are allowed.',
                     },
-                    required: {
-                        value: true,
-                        message: 'This field is required.',
+                    pattern: {
+                        value: /^(?=.*[a-z])(?=.*[A-Z])/,
+                        message:
+                            'At least one uppercase and one lowercase is required.',
                     },
                 }}
                 render={({
@@ -115,13 +144,49 @@ export const Register = ({ navigation }) => {
             <Controller
                 control={control}
                 rules={{
+                    validate: async (repeatedPassword, { password }) => {
+                        return password === repeatedPassword
+                            ? true
+                            : 'Repeated password does not match.';
+                    },
+                }}
+                render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { invalid, error },
+                }) => (
+                    <>
+                        <Input
+                            placeholder="Password"
+                            textContentType="password"
+                            autoCapitalize={false}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                        />
+                        <TextInputError fieldState={{ error, invalid }} />
+                    </>
+                )}
+                name="repeatPassword"
+            />
+
+            <Controller
+                control={control}
+                rules={{
+                    required: {
+                        value: true,
+                        message: 'This field is required.',
+                    },
+                    minLength: {
+                        value: 4,
+                        message: 'Minimum 4 characters are required.',
+                    },
                     maxLength: {
                         value: 100,
                         message: 'Maximum 100 characters are allowed.',
                     },
-                    required: {
-                        value: true,
-                        message: 'This field is required.',
+                    pattern: {
+                        value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                        message: 'Not a valid email',
                     },
                 }}
                 render={({
@@ -146,13 +211,17 @@ export const Register = ({ navigation }) => {
             <Controller
                 control={control}
                 rules={{
-                    maxLength: {
-                        value: 100,
-                        message: 'Maximum 100 characters are allowed.',
-                    },
                     required: {
                         value: true,
                         message: 'This field is required.',
+                    },
+                    minLength: {
+                        value: 3,
+                        message: 'Minimum 3 characters are required.',
+                    },
+                    maxLength: {
+                        value: 100,
+                        message: 'Maximum 100 characters are allowed.',
                     },
                 }}
                 render={({
