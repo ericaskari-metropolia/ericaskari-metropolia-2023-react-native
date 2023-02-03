@@ -13,6 +13,7 @@ const MainContextProvider = ({
 }) => {
     const [userProfile, setUserProfile] = useState(defaultUserProfile ?? null);
     const [accessToken, setAccessToken] = useState(defaultAccessToken ?? null);
+    const [needsUpdate, setNeedsUpdate] = useState(true);
 
     useEffect(() => {
         onUserProfileSet(userProfile);
@@ -31,6 +32,8 @@ const MainContextProvider = ({
                     setAccessToken(accessToken);
                     onAccessTokenSet(userProfile);
                 },
+                needsUpdate,
+                setNeedsUpdate,
             ]}
         >
             {children}

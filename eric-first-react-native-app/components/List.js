@@ -2,7 +2,8 @@ import { FlatList, ImageBackground, Text, View } from 'react-native';
 import { ListItem } from './ListItem';
 import { Settings } from 'react-native-feather';
 
-export const List = ({ items, navigation }) => {
+/** @type {import('../types/types').ListComponent} */
+export const List = ({ items, navigation, getMediaUrlByFileName }) => {
     return (
         <View>
             <FlatList
@@ -42,7 +43,11 @@ export const List = ({ items, navigation }) => {
                 style={{ backgroundColor: '#202028' }}
                 data={items}
                 renderItem={({ item, index }) => (
-                    <ListItem navigation={navigation} item={item} />
+                    <ListItem
+                        navigation={navigation}
+                        item={item}
+                        getMediaUrlByFileName={getMediaUrlByFileName}
+                    />
                 )}
             />
         </View>

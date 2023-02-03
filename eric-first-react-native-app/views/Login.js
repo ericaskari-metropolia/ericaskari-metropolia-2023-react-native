@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { Platform, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { MainContext } from '../contexts/MainContext';
@@ -19,19 +19,11 @@ export const Login = ({ navigation }) => {
         },
     });
 
-    useEffect(() => {
-        if (!userProfile) {
-            return;
-        }
-        const { token, user } = userProfile;
-    }, [userProfile]);
-
     const onSubmit = useCallback(async ({ username, password }) => {
         const [body, error] = await postLogin({
             username,
             password,
         });
-        console.log(body);
         if (error) {
             if (Platform.OS === 'android') {
                 ToastAndroid.show(error.message, ToastAndroid.SHORT);

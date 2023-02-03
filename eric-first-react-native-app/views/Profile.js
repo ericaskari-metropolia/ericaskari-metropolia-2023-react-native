@@ -51,16 +51,11 @@ export const Profile = ({ navigation }) => {
         >
             <Text>Profile</Text>
             <FlatList
-                data={[
-                    getMediaUrlByFileName({
-                        fileName: media?.thumbnails?.w160,
-                    }),
-                ]}
+                data={[getMediaUrlByFileName(media?.thumbnails?.w160)]}
                 style={{}}
                 numColumns={1}
                 keyExtractor={(e) => e}
                 renderItem={({ item }) => {
-                    console.log(item);
                     return (
                         <Image
                             containerStyle={{

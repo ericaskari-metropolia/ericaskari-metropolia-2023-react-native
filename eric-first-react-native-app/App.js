@@ -37,7 +37,7 @@ const App = () => {
                 {loadedStorageData.loaded && (
                     <MainContextProvider
                         defaultUserProfile={loadedStorageData.data.userProfile}
-                        accessToken={loadedStorageData.data.accessToken}
+                        defaultAccessToken={loadedStorageData.data.accessToken}
                         onAccessTokenSet={(accessToken) => {
                             (async () => {
                                 await AsyncStorage.setItem(
@@ -54,7 +54,6 @@ const App = () => {
                                 );
                             })();
                         }}
-                        logoutCalled={() => {}}
                     >
                         <Navigator />
                     </MainContextProvider>

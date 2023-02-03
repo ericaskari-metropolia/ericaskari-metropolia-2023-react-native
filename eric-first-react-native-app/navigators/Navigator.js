@@ -8,6 +8,7 @@ import { Single } from '../views/Single';
 import { Login } from '../views/Login';
 import { MainContext } from '../contexts/MainContext';
 import { Register } from '../views/Register';
+import { Upload } from '../views/Upload';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -16,6 +17,7 @@ const TabScreen = () => {
     return (
         <Tab.Navigator>
             <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen name="Upload" component={Upload} />
             <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
     );
@@ -23,7 +25,6 @@ const TabScreen = () => {
 
 const StackScreen = () => {
     const [isLoggedIn] = useContext(MainContext);
-    console.log({ isLoggedIn });
     return (
         <Stack.Navigator>
             {isLoggedIn && (
