@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const baseUrl = 'https://media.mw.metropolia.fi/wbma';
+export const appId = 'ericaska1';
 
 export const useAuthentication = () => {
     const handleResponse = async (fetch) => {
@@ -79,6 +80,24 @@ export const useAuthentication = () => {
         });
     };
 
+    const postTag = async ({ fileId, tag, accessToken }) => {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            headers.append('x-access-token', accessToken);
+
+            return await fetch(baseUrl + '/tags', {
+                method: 'POST',
+                body: JSON.stringify({
+                    file_id: fileId,
+                    tag,
+                }),
+                headers,
+            });
+        });
+    };
+
     const postRegister = async ({ username, password, email, fullName }) => {
         return handleResponse(async () => {
             const headers = new Headers();
@@ -136,7 +155,10 @@ export const useAuthentication = () => {
             console.log('Fetching Media');
 
             (async () => {
-                const [items, error] = await getMedia();
+                const [items, error, status] = await getFilesByTag({
+                    tag: appId,
+                });
+                console.log(`tag: ${appId} - file count: ${items?.length}`);
                 if (!error) {
                     const itemsDetailsList = items.map((media) => {
                         return getMediaById({
@@ -163,6 +185,7 @@ export const useAuthentication = () => {
     return {
         postLogin: postLogin,
         postRegister: postRegister,
+        postTag: postTag,
         uploadMedia: uploadMedia,
         getFilesByTag: getFilesByTag,
         getMediaById: getMediaById,

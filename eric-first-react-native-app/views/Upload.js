@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Platform, ToastAndroid, View } from 'react-native';
 import { useMainContext } from '../contexts/MainContext';
-import { useAuthentication } from '../hooks/ApiHooks';
+import { appId, useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
 import AlertIOS from 'react-native/Libraries/Alert/Alert';
@@ -15,7 +15,7 @@ export const Upload = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { accessToken, setNeedsUpdate } = useMainContext();
-    const { uploadMedia } = useAuthentication();
+    const { uploadMedia, postTag } = useAuthentication();
     const {
         control,
         handleSubmit,
@@ -34,24 +34,39 @@ export const Upload = ({ navigation }) => {
                 return;
             }
             setIsLoading(true);
-            const [body, error] = await uploadMedia({
-                accessToken,
-                title,
-                description,
-                file: {
-                    name: selectedImage.fileName ?? 'file.jpeg',
-                    type: selectedImage.type,
-                    uri: selectedImage.uri,
-                },
-            });
+            const [uploadMediaResponseBody, uploadMediaResponseError] =
+                await uploadMedia({
+                    accessToken,
+                    title,
+                    description,
+                    file: {
+                        name: selectedImage.fileName ?? 'file.jpeg',
+                        type: selectedImage.type,
+                        uri: selectedImage.uri,
+                    },
+                });
+            {
+                if (uploadMediaResponseBody) {
+                    const [postTagResponseBody, postTagResponseError] =
+                        await postTag({
+                            fileId: uploadMediaResponseBody.file_id,
+                            tag: appId,
+                            accessToken,
+                        });
+                    console.log({ postTagResponseBody, postTagResponseError });
+                }
+            }
             // Waiting for thumbnails to generate
             await promiseWait();
             setIsLoading(false);
-            if (error) {
+            if (uploadMediaResponseError) {
                 if (Platform.OS === 'android') {
-                    ToastAndroid.show(error.message, ToastAndroid.SHORT);
+                    ToastAndroid.show(
+                        uploadMediaResponseError.message,
+                        ToastAndroid.SHORT
+                    );
                 } else {
-                    AlertIOS.alert(error.message);
+                    AlertIOS.alert(uploadMediaResponseError.message);
                 }
             } else {
                 if (Platform.OS === 'android') {
