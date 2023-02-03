@@ -5,49 +5,10 @@ import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
 import AlertIOS from 'react-native/Libraries/Alert/Alert';
-import { Button, Image, Input } from '@rneui/themed';
-import * as ImagePicker from 'expo-image-picker';
-
-const fakeWait = (time = 1000) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, time);
-    });
-};
-const AppImagePicker = ({ onImageSelect }) => {
-    const [previewImageUri, setPreviewImageUri] = useState(null);
-
-    const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setPreviewImageUri(result.assets[0].uri);
-            onImageSelect(result.assets[0]);
-        }
-    };
-
-    return (
-        <View>
-            <Button
-                title="Pick an image from camera roll"
-                onPress={pickImage}
-            />
-            {!!previewImageUri && (
-                <Image
-                    source={{ uri: previewImageUri }}
-                    style={{ width: 200, height: 200 }}
-                />
-            )}
-        </View>
-    );
-};
+import { Button, Input } from '@rneui/themed';
+import { AppImagePicker } from '../components/AppImagePicker';
+import { promiseWait } from '../util/PromiseWait';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const Upload = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -55,10 +16,15 @@ export const Upload = ({ navigation }) => {
 
     const { accessToken, setNeedsUpdate } = useMainContext();
     const { uploadMedia } = useAuthentication();
-    const { control, handleSubmit } = useForm({
+    const {
+        control,
+        handleSubmit,
+        formState: { isValid },
+        reset,
+    } = useForm({
         defaultValues: {
-            title: 'Media',
-            description: 'Some Test Media',
+            title: '',
+            description: '',
         },
     });
 
@@ -79,7 +45,7 @@ export const Upload = ({ navigation }) => {
                 },
             });
             // Waiting for thumbnails to generate
-            await fakeWait();
+            await promiseWait();
             setIsLoading(false);
             if (error) {
                 if (Platform.OS === 'android') {
@@ -96,6 +62,7 @@ export const Upload = ({ navigation }) => {
                 } else {
                     AlertIOS.alert('Successfully uploaded!');
                 }
+                onReset();
                 setNeedsUpdate(true);
                 navigation.navigate('Home');
             }
@@ -103,6 +70,14 @@ export const Upload = ({ navigation }) => {
         [selectedImage]
     );
 
+    const onReset = useCallback(() => {
+        reset();
+        setSelectedImage(null);
+    }, []);
+
+    useFocusEffect(() => {
+        // onReset().then();
+    });
     return (
         <View>
             <Controller
@@ -161,12 +136,15 @@ export const Upload = ({ navigation }) => {
                 onImageSelect={(image) => {
                     setSelectedImage(image);
                 }}
+                previewImage={selectedImage}
             />
             <Button
                 title="Upload"
                 onPress={handleSubmit(onSubmit)}
                 loading={isLoading}
+                disabled={!isValid || !selectedImage}
             />
+            <Button title="Reset" onPress={onReset} loading={isLoading} />
         </View>
     );
 };
