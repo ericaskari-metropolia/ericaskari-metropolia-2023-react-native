@@ -1,28 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, SafeAreaView, Text } from 'react-native';
 import { MainContext } from '../contexts/MainContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Button, Image } from '@rneui/themed';
 
 export const Profile = ({ navigation }) => {
-    const [isLoggedIn, setIsLoggedIn] = useContext(MainContext);
+    const [userProfile, accessToken, setUserProfile, setAccessToken] =
+        useContext(MainContext);
     const [media, setMedia] = useState(null);
     const { getFilesByTag, getMediaById, getMediaUrlByFileName } =
         useAuthentication();
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            (async () => {
-                navigation.navigate('Login');
-                await AsyncStorage.clear();
-            })();
-        }
-    }, [isLoggedIn]);
-
     useEffect(() => {
         (async () => {
-            const tag = `avatar_${isLoggedIn?.profile?.user_id ?? ''}`;
+            const tag = `avatar_${userProfile?.user_id ?? ''}`;
             const [data, error, status] = await getFilesByTag({ tag });
             const images = data ?? [];
             const sortedImages = images.sort(
@@ -47,7 +37,9 @@ export const Profile = ({ navigation }) => {
     }, []);
 
     const logout = () => {
-        setIsLoggedIn(null);
+        setAccessToken(null);
+        setUserProfile(null);
+        navigation.navigate('Login');
     };
 
     return (
@@ -83,9 +75,10 @@ export const Profile = ({ navigation }) => {
                 }}
             />
 
-            <Text>Username: {isLoggedIn?.profile?.username ?? '-'}</Text>
-            <Text>Fullname: {isLoggedIn?.profile?.full_name ?? '-'}</Text>
-            <Text>Email: {isLoggedIn?.profile?.email ?? '-'}</Text>
+            <Text>Username: {userProfile?.username ?? '-'}</Text>
+            <Text>Username: {userProfile?.username ?? '-'}</Text>
+            <Text>Fullname: {userProfile?.full_name ?? '-'}</Text>
+            <Text>Email: {userProfile?.email ?? '-'}</Text>
             <Button title={'Logout'} onPress={logout} />
         </SafeAreaView>
     );

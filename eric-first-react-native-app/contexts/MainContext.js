@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
+/** @type {import('../types/types').AppContext} */
 const MainContext = React.createContext([]);
 
-const MainContextProvider = ({ children, localStorageData }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorageData ?? null);
+const MainContextProvider = ({
+    children,
+    defaultUserProfile,
+    defaultAccessToken,
+    onUserProfileSet,
+    onAccessTokenSet,
+}) => {
+    const [userProfile, setUserProfile] = useState(defaultUserProfile ?? null);
+    const [accessToken, setAccessToken] = useState(defaultAccessToken ?? null);
+
+    useEffect(() => {
+        onUserProfileSet(userProfile);
+    }, [userProfile]);
 
     return (
-        <MainContext.Provider value={[isLoggedIn, setIsLoggedIn]}>
+        <MainContext.Provider
+            value={[
+                userProfile,
+                accessToken,
+                (userProfile) => {
+                    setUserProfile(userProfile);
+                    onUserProfileSet(userProfile);
+                },
+                (accessToken) => {
+                    setAccessToken(accessToken);
+                    onAccessTokenSet(userProfile);
+                },
+            ]}
+        >
             {children}
         </MainContext.Provider>
     );

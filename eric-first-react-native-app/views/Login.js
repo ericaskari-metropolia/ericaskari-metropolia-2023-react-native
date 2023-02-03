@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect } from 'react';
 import { Platform, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { MainContext } from '../contexts/MainContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
@@ -10,13 +9,10 @@ import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
 
 export const Login = ({ navigation }) => {
-    const [isLoggedIn, setIsLoggedIn] = useContext(MainContext);
+    const [userProfile, accessToken, setUserProfile, setAccessToken] =
+        useContext(MainContext);
     const { postLogin } = useAuthentication();
-    const {
-        control,
-        handleSubmit,
-        formState: { errors, isSubmitted, isDirty },
-    } = useForm({
+    const { control, handleSubmit } = useForm({
         defaultValues: {
             username: 'ericaska2',
             password: 'Hashem741',
@@ -24,16 +20,11 @@ export const Login = ({ navigation }) => {
     });
 
     useEffect(() => {
-        if (!isLoggedIn) {
+        if (!userProfile) {
             return;
         }
-        const { token, user } = isLoggedIn;
-        navigation.navigate('Tabs');
-        (async () => {
-            await AsyncStorage.setItem('userToken', token);
-            await AsyncStorage.setItem('userProfile', JSON.stringify(user));
-        })();
-    }, [isLoggedIn]);
+        const { token, user } = userProfile;
+    }, [userProfile]);
 
     const onSubmit = useCallback(async ({ username, password }) => {
         const [body, error] = await postLogin({
@@ -50,10 +41,9 @@ export const Login = ({ navigation }) => {
             return;
         }
 
-        setIsLoggedIn({
-            token: body.token,
-            user: body.user,
-        });
+        setAccessToken(body.token);
+        setUserProfile(body.user);
+        navigation.navigate('Tabs');
     }, []);
 
     return (

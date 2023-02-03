@@ -9,11 +9,7 @@ import { Button, Input } from '@rneui/themed';
 
 export const Register = ({ navigation }) => {
     const { postRegister } = useAuthentication();
-    const {
-        control,
-        handleSubmit,
-        formState: { errors, isSubmitted, isDirty },
-    } = useForm({
+    const { control, handleSubmit } = useForm({
         defaultValues: {
             username: 'ericaska',
             password: 'ericaskaa',
@@ -24,7 +20,7 @@ export const Register = ({ navigation }) => {
 
     const onSubmit = useCallback(
         async ({ username, password, fullName, email }) => {
-            const { body, error } = await postRegister({
+            const [body, error] = await postRegister({
                 username,
                 password,
                 fullName,

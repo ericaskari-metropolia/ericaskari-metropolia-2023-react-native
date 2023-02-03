@@ -13,14 +13,20 @@ const App = () => {
 
     useEffect(() => {
         (async () => {
-            const token = await AsyncStorage.getItem('userToken');
-            const profile = await AsyncStorage.getItem('userProfile');
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            const userProfile = await AsyncStorage.getItem('userProfile');
             setLoadedStorageData({
                 loaded: true,
                 data:
-                    token && profile
-                        ? { token, profile: JSON.parse(profile) }
-                        : null,
+                    accessToken && userProfile
+                        ? {
+                              accessToken: accessToken,
+                              userProfile: JSON.parse(userProfile),
+                          }
+                        : {
+                              accessToken: null,
+                              userProfile: null,
+                          },
             });
         })();
     }, []);
@@ -30,7 +36,25 @@ const App = () => {
             <SafeAreaProvider>
                 {loadedStorageData.loaded && (
                     <MainContextProvider
-                        localStorageData={loadedStorageData.data}
+                        defaultUserProfile={loadedStorageData.data.userProfile}
+                        accessToken={loadedStorageData.data.accessToken}
+                        onAccessTokenSet={(accessToken) => {
+                            (async () => {
+                                await AsyncStorage.setItem(
+                                    'accessToken',
+                                    JSON.stringify(accessToken)
+                                );
+                            })();
+                        }}
+                        onUserProfileSet={(userProfile) => {
+                            (async () => {
+                                await AsyncStorage.setItem(
+                                    'userProfile',
+                                    JSON.stringify(userProfile)
+                                );
+                            })();
+                        }}
+                        logoutCalled={() => {}}
                     >
                         <Navigator />
                     </MainContextProvider>
