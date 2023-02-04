@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
-import PropTypes from 'prop-types';
 import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
@@ -8,31 +7,49 @@ import { TextInputError } from '../components/TextInputError';
 import { Button, Input } from '@rneui/themed';
 import { showToast } from '../util/Toast';
 
-export const Login = ({ navigation }) => {
-    const { setUserProfile, setAccessToken, setExpirationDate } =
-        useMainContext();
-    const { postLogin } = useAuthentication();
-    const { control, handleSubmit } = useForm({
+export const Modify = ({ route, navigation }) => {
+    const { accessToken, setNeedsUpdate } = useMainContext();
+    const [isLoading, setIsLoading] = useState(false);
+    const { item, canDelete, canEdit } = route.params;
+
+    const { modifyMedia } = useAuthentication(accessToken);
+    const {
+        control,
+        handleSubmit,
+        formState: { isValid },
+        reset,
+    } = useForm({
         defaultValues: {
-            username: 'ericaska2',
-            password: 'Hashem741',
+            title: item?.title ?? '',
+            description: item?.description ?? '',
         },
     });
 
-    const onSubmit = useCallback(async ({ username, password }) => {
-        const [body, error] = await postLogin({
-            username,
-            password,
-        });
-        if (error) {
-            showToast(error.message, 'postLogin');
-            return;
-        }
+    const onSubmit = useCallback(
+        async ({ title, description }) => {
+            setIsLoading(true);
 
-        setAccessToken(body.token);
-        setUserProfile(body.user);
-        setExpirationDate(Date.now() + 1000 * 60 * 10);
-        navigation.navigate('Tabs');
+            const [data, error] = await modifyMedia({
+                fileId: item.file_id,
+                title,
+                description,
+            });
+            setIsLoading(false);
+            console.log({ error, data });
+            if (error) {
+                showToast(error.message, 'modifyMedia');
+                return;
+            }
+
+            onReset();
+            setNeedsUpdate(true);
+            navigation.navigate('Home');
+        },
+        [item]
+    );
+
+    const onReset = useCallback(() => {
+        reset();
     }, []);
 
     return (
@@ -51,8 +68,8 @@ export const Login = ({ navigation }) => {
                 }) => (
                     <>
                         <Input
-                            placeholder="Username"
-                            textContentType="username"
+                            placeholder="Title"
+                            textContentType="text"
                             autoCapitalize={false}
                             onBlur={onBlur}
                             onChangeText={onChange}
@@ -61,16 +78,11 @@ export const Login = ({ navigation }) => {
                         <TextInputError fieldState={{ error, invalid }} />
                     </>
                 )}
-                name="username"
+                name="title"
             />
-
             <Controller
                 control={control}
                 rules={{
-                    maxLength: {
-                        value: 100,
-                        message: 'Maximum 100 characters are allowed.',
-                    },
                     required: {
                         value: true,
                         message: 'This field is required.',
@@ -82,8 +94,8 @@ export const Login = ({ navigation }) => {
                 }) => (
                     <>
                         <Input
-                            placeholder="Password"
-                            textContentType="password"
+                            placeholder="Description"
+                            textContentType="text"
                             autoCapitalize={false}
                             onBlur={onBlur}
                             onChangeText={onChange}
@@ -92,18 +104,15 @@ export const Login = ({ navigation }) => {
                         <TextInputError fieldState={{ error, invalid }} />
                     </>
                 )}
-                name="password"
+                name="description"
             />
-
-            <Button title="Login" onPress={handleSubmit(onSubmit)} />
             <Button
-                title="Register"
-                onPress={() => navigation.navigate('Register')}
+                title="Update"
+                onPress={handleSubmit(onSubmit)}
+                loading={isLoading}
+                disabled={!isValid}
             />
+            <Button title="Reset" onPress={onReset} loading={isLoading} />
         </View>
     );
-};
-
-Login.propTypes = {
-    navigation: PropTypes.object,
 };

@@ -8,12 +8,12 @@ export const useAuthentication = (accessToken) => {
         try {
             const response = await fetch();
             if (response.ok) {
-                return [await response.json(), null, response.status];
+                return [await response.json(), null, response.status, response];
             } else {
-                return [null, await response.json(), response.status];
+                return [null, await response.json(), response.status, response];
             }
         } catch (error) {
-            return [null, error, 0];
+            return [null, error, 0, null];
         }
     };
 
@@ -92,6 +92,21 @@ export const useAuthentication = (accessToken) => {
         });
     };
 
+    const modifyMedia = async ({ title, description, fileId }) => {
+        console.log({ title, description, fileId });
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            headers.append('x-access-token', accessToken);
+            return await fetch(baseUrl + `/media/${fileId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ title, description }),
+                headers,
+            });
+        });
+    };
+
     const postTag = async ({ fileId, tag }) => {
         return handleResponse(async () => {
             const headers = new Headers();
@@ -151,12 +166,25 @@ export const useAuthentication = (accessToken) => {
             });
         });
     };
+    const deleteMedia = async (fileId) => {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            headers.append('x-access-token', accessToken);
+
+            return await fetch(baseUrl + `/media/${fileId}`, {
+                method: 'DELETE',
+                headers,
+            });
+        });
+    };
 
     const getMediaUrlByFileName = (fileName) => {
         return `${baseUrl}/uploads/${fileName}`;
     };
 
-    const useMedia = ({ needsUpdate, setNeedsUpdate }) => {
+    const useMedia = ({ needsUpdate, setNeedsUpdate, userId }) => {
         const [isLoaded, setIsLoaded] = useState(false);
         const [mediaArray, setMediaArray] = useState([]);
 
@@ -180,7 +208,12 @@ export const useAuthentication = (accessToken) => {
                     const result = await Promise.all(itemsDetailsList);
                     const cleanList = result
                         .map((x) => x[0])
-                        .filter((x) => !!x);
+                        .filter((x) => !!x)
+                        .filter((x) =>
+                            userId === null || userId === undefined
+                                ? true
+                                : userId === x.user_id
+                        );
                     setMediaArray(cleanList);
                     setMediaArray(cleanList);
                     setIsLoaded(true);
@@ -199,11 +232,13 @@ export const useAuthentication = (accessToken) => {
         postRegister: postRegister,
         postTag: postTag,
         uploadMedia: uploadMedia,
+        modifyMedia: modifyMedia,
         getFilesByTag: getFilesByTag,
         getMediaById: getMediaById,
         getUserById: getUserById,
         getMediaUrlByFileName: getMediaUrlByFileName,
         checkUsername: checkUsername,
         useMedia: useMedia,
+        deleteMedia: deleteMedia,
     };
 };

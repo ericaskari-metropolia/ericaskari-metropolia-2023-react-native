@@ -3,12 +3,20 @@ import PropTypes from 'prop-types';
 import { Avatar, ListItem as RNEListItem } from '@rneui/themed';
 
 /** @type {import('../types/types').ListItemComponent} */
-export const ListItem = ({ item, navigation, getMediaUrlByFileName }) => {
+export const ListItem = ({
+    item,
+    navigation,
+    getMediaUrlByFileName,
+    canEdit,
+    canDelete,
+}) => {
     return (
         <TouchableOpacity
             onPress={() => {
                 navigation.navigate('Single', {
                     item,
+                    canEdit,
+                    canDelete,
                 });
             }}
         >

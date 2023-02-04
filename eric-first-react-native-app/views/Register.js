@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Platform, ToastAndroid, View } from 'react-native';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
-import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
+import { showToast } from '../util/Toast';
 
 export const Register = ({ navigation }) => {
     const { postRegister, checkUsername } = useAuthentication();
@@ -27,27 +27,13 @@ export const Register = ({ navigation }) => {
                 fullName,
                 email,
             });
-
             if (error) {
-                if (Platform.OS === 'android') {
-                    ToastAndroid.show(error.message, ToastAndroid.SHORT);
-                } else {
-                    AlertIOS.alert(error.message);
-                }
+                showToast(error.message, 'postRegister');
                 return;
             }
 
-            if (Platform.OS === 'android') {
-                ToastAndroid.show(
-                    'User created successfully! You can login now.',
-                    ToastAndroid.SHORT
-                );
-            } else {
-                AlertIOS.alert(
-                    'User created successfully! You can login now.',
-                    ''
-                );
-            }
+            showToast('User created successfully! You can login now.');
+
             navigation.navigate('Login');
         },
         []

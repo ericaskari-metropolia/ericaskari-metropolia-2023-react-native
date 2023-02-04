@@ -3,7 +3,13 @@ import { ListItem } from './ListItem';
 import { Settings } from 'react-native-feather';
 
 /** @type {import('../types/types').ListComponent} */
-export const List = ({ items, navigation, getMediaUrlByFileName }) => {
+export const List = ({
+    items,
+    navigation,
+    getMediaUrlByFileName,
+    canDelete,
+    canEdit,
+}) => {
     return (
         <View>
             <FlatList
@@ -46,6 +52,8 @@ export const List = ({ items, navigation, getMediaUrlByFileName }) => {
                     <ListItem
                         navigation={navigation}
                         item={item}
+                        canDelete={canDelete(item)}
+                        canEdit={canEdit(item)}
                         getMediaUrlByFileName={getMediaUrlByFileName}
                     />
                 )}

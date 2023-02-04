@@ -1,24 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import { AsyncImage } from '../components/AsyncImage';
 import { useAuthentication } from '../hooks/ApiHooks';
 import { Audio, Video } from 'expo-av';
 import { useMainContext } from '../contexts/MainContext';
+import { Button } from '@rneui/themed';
+import { showToast } from '../util/Toast';
 
 const triggerAudio = async (ref) => {
     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     ref.current.playAsync();
 };
 
-export const Single = ({ route }) => {
-    const { accessToken } = useMainContext();
+export const Single = ({ route, navigation }) => {
+    const { accessToken, userProfile, setNeedsUpdate } = useMainContext();
     const video = React.useRef(null);
     const [status, setStatus] = React.useState({});
     const [ownerProfile, setOwnerProfile] = React.useState(null);
-    const { item } = route.params;
-    const { getMediaUrlByFileName, getUserById } =
+    const { item, canDelete, canEdit } = route.params;
+    const { getMediaUrlByFileName, getUserById, deleteMedia } =
         useAuthentication(accessToken);
-
     useEffect(() => {
         if (status.isPlaying) {
             triggerAudio(video).then();
@@ -27,12 +28,28 @@ export const Single = ({ route }) => {
 
     useEffect(() => {
         (async () => {
-            console.log(item.user_id);
             const [data, error] = await getUserById(item.user_id);
+            if (error) {
+                showToast(error.message, 'getUserById');
+            }
             setOwnerProfile(data);
-            console.log({ data, error });
         })();
     }, [item]);
+
+    const onDelete = useCallback(async (mediaId) => {
+        const [data, error] = await deleteMedia(mediaId);
+        if (error) {
+            showToast(error.message, 'deleteMedia');
+        }
+        setNeedsUpdate(true);
+        navigation.goBack();
+    }, []);
+
+    const onEdit = useCallback(async (item) => {
+        navigation.navigate('Modify', {
+            item,
+        });
+    }, []);
 
     return (
         <SafeAreaView>
@@ -72,6 +89,14 @@ export const Single = ({ route }) => {
                             }
                         />
                     </>
+                )}
+                {!!canDelete && (
+                    <Button onPress={() => onDelete(item.file_id)}>
+                        Delete
+                    </Button>
+                )}
+                {!!canEdit && (
+                    <Button onPress={() => onEdit(item)}>Edit</Button>
                 )}
             </View>
         </SafeAreaView>

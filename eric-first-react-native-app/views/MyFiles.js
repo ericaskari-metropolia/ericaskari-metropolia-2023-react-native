@@ -3,17 +3,16 @@ import { SafeAreaView, View } from 'react-native';
 import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 
-export const Home = ({ navigation }) => {
+export const MyFiles = ({ navigation }) => {
     const { needsUpdate, setNeedsUpdate, accessToken, userProfile } =
         useMainContext();
     const { useMedia, getMediaUrlByFileName } = useAuthentication(accessToken);
-    console.log(userProfile);
+
     const { mediaArray } = useMedia({
         needsUpdate,
         setNeedsUpdate,
+        userId: userProfile.user_id,
     });
-    console.log(mediaArray);
-
     return (
         <SafeAreaView>
             <View

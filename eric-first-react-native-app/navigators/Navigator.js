@@ -9,6 +9,8 @@ import { Login } from '../views/Login';
 import { useMainContext } from '../contexts/MainContext';
 import { Register } from '../views/Register';
 import { Upload } from '../views/Upload';
+import { MyFiles } from '../views/MyFiles';
+import { Modify } from '../views/Modify';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -24,7 +26,7 @@ const TabScreen = () => {
 };
 
 const StackScreen = () => {
-    const { userProfile } = useMainContext();
+    const { userProfile, expirationDate } = useMainContext();
     return (
         <Stack.Navigator>
             {userProfile && (
@@ -41,6 +43,8 @@ const StackScreen = () => {
             )}
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="MyFiles" component={MyFiles} />
+            <Stack.Screen name="Modify" component={Modify} />
         </Stack.Navigator>
     );
 };

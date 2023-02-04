@@ -75,6 +75,13 @@ export const Profile = ({ navigation }) => {
             <Text>Fullname: {userProfile?.full_name ?? '-'}</Text>
             <Text>Email: {userProfile?.email ?? '-'}</Text>
             <Button title={'Logout'} onPress={logout} />
+
+            <Button
+                title={'View My Files'}
+                onPress={() => {
+                    navigation.navigate('MyFiles');
+                }}
+            />
         </SafeAreaView>
     );
 };

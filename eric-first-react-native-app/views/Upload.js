@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { Platform, ToastAndroid, View } from 'react-native';
+import { View } from 'react-native';
 import { useMainContext } from '../contexts/MainContext';
 import { appId, useAuthentication } from '../hooks/ApiHooks';
 import { Controller, useForm } from 'react-hook-form';
 import { TextInputError } from '../components/TextInputError';
-import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
 import { AppImagePicker } from '../components/AppImagePicker';
 import { promiseWait } from '../util/PromiseWait';
 import { useFocusEffect } from '@react-navigation/native';
+import { showToast } from '../util/Toast';
 
 export const Upload = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -33,7 +33,9 @@ export const Upload = ({ navigation }) => {
             if (!selectedImage) {
                 return;
             }
+
             setIsLoading(true);
+
             const [uploadMediaResponseBody, uploadMediaResponseError] =
                 await uploadMedia({
                     title,
@@ -44,41 +46,26 @@ export const Upload = ({ navigation }) => {
                         uri: selectedImage.uri,
                     },
                 });
-            {
-                if (uploadMediaResponseBody) {
-                    const [postTagResponseBody, postTagResponseError] =
-                        await postTag({
-                            fileId: uploadMediaResponseBody.file_id,
-                            tag: appId,
-                        });
-                    console.log({ postTagResponseBody, postTagResponseError });
-                }
+            if (uploadMediaResponseError) {
+                showToast(uploadMediaResponseError.message, 'uploadMedia');
+                return;
             }
+
+            const [postTagResponseBody, postTagResponseError] = await postTag({
+                fileId: uploadMediaResponseBody.file_id,
+                tag: appId,
+            });
+            if (postTagResponseError) {
+                showToast(postTagResponseError.message, 'postTag');
+                return;
+            }
+
             // Waiting for thumbnails to generate
             await promiseWait();
             setIsLoading(false);
-            if (uploadMediaResponseError) {
-                if (Platform.OS === 'android') {
-                    ToastAndroid.show(
-                        uploadMediaResponseError.message,
-                        ToastAndroid.SHORT
-                    );
-                } else {
-                    AlertIOS.alert(uploadMediaResponseError.message);
-                }
-            } else {
-                if (Platform.OS === 'android') {
-                    ToastAndroid.show(
-                        'Successfully uploaded!',
-                        ToastAndroid.SHORT
-                    );
-                } else {
-                    AlertIOS.alert('Successfully uploaded!');
-                }
-                onReset();
-                setNeedsUpdate(true);
-                navigation.navigate('Home');
-            }
+            onReset();
+            setNeedsUpdate(true);
+            navigation.navigate('Home');
         },
         [selectedImage]
     );
