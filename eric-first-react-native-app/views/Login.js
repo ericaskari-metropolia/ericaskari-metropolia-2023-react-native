@@ -9,7 +9,8 @@ import AlertIOS from 'react-native/Libraries/Alert/Alert';
 import { Button, Input } from '@rneui/themed';
 
 export const Login = ({ navigation }) => {
-    const { setUserProfile, setAccessToken } = useMainContext();
+    const { setUserProfile, setAccessToken, setExpirationDate } =
+        useMainContext();
     const { postLogin } = useAuthentication();
     const { control, handleSubmit } = useForm({
         defaultValues: {
@@ -34,6 +35,7 @@ export const Login = ({ navigation }) => {
 
         setAccessToken(body.token);
         setUserProfile(body.user);
+        setExpirationDate(Date.now() + 1000 * 60 * 10);
         navigation.navigate('Tabs');
     }, []);
 

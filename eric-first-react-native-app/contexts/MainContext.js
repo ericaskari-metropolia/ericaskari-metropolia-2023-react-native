@@ -6,8 +6,10 @@ const MainContext = React.createContext({
     userProfile: null,
     accessToken: null,
     needsUpdate: true,
+    expirationDate: null,
     setAccessToken: () => {},
     setNeedsUpdate: () => {},
+    setExpirationDate: () => {},
     setUserProfile: () => {},
 });
 
@@ -20,11 +22,16 @@ export const MainContextProvider = ({
     children,
     defaultUserProfile,
     defaultAccessToken,
+    defaultExpirationDate,
     onUserProfileSet,
     onAccessTokenSet,
+    onExpirationDateSet,
 }) => {
     const [userProfile, setUserProfile] = useState(defaultUserProfile ?? null);
     const [accessToken, setAccessToken] = useState(defaultAccessToken ?? null);
+    const [expirationDate, setExpirationDate] = useState(
+        defaultExpirationDate ?? null
+    );
     const [needsUpdate, setNeedsUpdate] = useState(true);
 
     useEffect(() => {
@@ -36,13 +43,18 @@ export const MainContextProvider = ({
             value={{
                 userProfile,
                 accessToken,
+                expirationDate,
                 setUserProfile: (userProfile) => {
                     setUserProfile(userProfile);
                     onUserProfileSet(userProfile);
                 },
                 setAccessToken: (accessToken) => {
                     setAccessToken(accessToken);
-                    onAccessTokenSet(userProfile);
+                    onAccessTokenSet(accessToken);
+                },
+                setExpirationDate: (date) => {
+                    setExpirationDate(date);
+                    onExpirationDateSet(date);
                 },
                 needsUpdate,
                 setNeedsUpdate: (value) => setNeedsUpdate(value),

@@ -15,7 +15,7 @@ export const Upload = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { accessToken, setNeedsUpdate } = useMainContext();
-    const { uploadMedia, postTag } = useAuthentication();
+    const { uploadMedia, postTag } = useAuthentication(accessToken);
     const {
         control,
         handleSubmit,
@@ -36,7 +36,6 @@ export const Upload = ({ navigation }) => {
             setIsLoading(true);
             const [uploadMediaResponseBody, uploadMediaResponseError] =
                 await uploadMedia({
-                    accessToken,
                     title,
                     description,
                     file: {
@@ -51,7 +50,6 @@ export const Upload = ({ navigation }) => {
                         await postTag({
                             fileId: uploadMediaResponseBody.file_id,
                             tag: appId,
-                            accessToken,
                         });
                     console.log({ postTagResponseBody, postTagResponseError });
                 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 const baseUrl = 'https://media.mw.metropolia.fi/wbma';
 export const appId = 'ericaska1';
 
-export const useAuthentication = () => {
+export const useAuthentication = (accessToken) => {
     const handleResponse = async (fetch) => {
         try {
             const response = await fetch();
@@ -39,6 +39,19 @@ export const useAuthentication = () => {
             });
         });
     };
+    const getUserById = async (userId) => {
+        return handleResponse(async () => {
+            const headers = new Headers();
+            headers.append('Accept', 'application/json');
+            headers.append('Content-Type', 'application/json');
+            headers.append('x-access-token', accessToken);
+
+            return await fetch(baseUrl + `/users/${userId}`, {
+                method: 'GET',
+                headers,
+            });
+        });
+    };
     const postLogin = async ({ username, password }) => {
         return handleResponse(async () => {
             const headers = new Headers();
@@ -53,7 +66,6 @@ export const useAuthentication = () => {
     };
 
     const uploadMedia = async ({
-        accessToken,
         title,
         description,
         file: { uri, name, type },
@@ -80,7 +92,7 @@ export const useAuthentication = () => {
         });
     };
 
-    const postTag = async ({ fileId, tag, accessToken }) => {
+    const postTag = async ({ fileId, tag }) => {
         return handleResponse(async () => {
             const headers = new Headers();
             headers.append('Accept', 'application/json');
@@ -189,6 +201,7 @@ export const useAuthentication = () => {
         uploadMedia: uploadMedia,
         getFilesByTag: getFilesByTag,
         getMediaById: getMediaById,
+        getUserById: getUserById,
         getMediaUrlByFileName: getMediaUrlByFileName,
         checkUsername: checkUsername,
         useMedia: useMedia,

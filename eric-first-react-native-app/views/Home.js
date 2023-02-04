@@ -4,8 +4,8 @@ import { useMainContext } from '../contexts/MainContext';
 import { useAuthentication } from '../hooks/ApiHooks';
 
 export const Home = ({ navigation }) => {
-    const { needsUpdate, setNeedsUpdate } = useMainContext();
-    const { useMedia, getMediaUrlByFileName } = useAuthentication();
+    const { needsUpdate, setNeedsUpdate, accessToken } = useMainContext();
+    const { useMedia, getMediaUrlByFileName } = useAuthentication(accessToken);
 
     const { mediaArray } = useMedia({
         needsUpdate,

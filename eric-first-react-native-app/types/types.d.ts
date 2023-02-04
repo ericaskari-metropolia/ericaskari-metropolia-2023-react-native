@@ -21,17 +21,21 @@ interface IMedia {
     time_added: string;
 }
 type IAccessToken = string;
+type IExpirationDate = string;
 type INeedsUpdate = boolean;
 export type IMediaList = IMedia[];
 type ISetUserModel = (userModel: IUserModel) => void;
 type ISetAccessToken = (accessToken: IAccessToken) => void;
+type ISetExpirationDate = (date: string) => void;
 type ISetNeedsUpdate = (needsUpdateNewValue: boolean) => void;
 
 export type IMainContext = {
     userProfile: IUserModel | null;
     accessToken: IAccessToken | null;
+    expirationDate: IExpirationDate | null;
     setUserProfile: ISetUserModel;
     setAccessToken: ISetAccessToken;
+    setExpirationDate: ISetExpirationDate;
     needsUpdate: INeedsUpdate;
     setNeedsUpdate: ISetNeedsUpdate;
 };

@@ -5,10 +5,11 @@ import { useAuthentication } from '../hooks/ApiHooks';
 import { Button, Image } from '@rneui/themed';
 
 export const Profile = ({ navigation }) => {
-    const { userProfile, setUserProfile, setAccessToken } = useMainContext();
+    const { userProfile, setUserProfile, setAccessToken, accessToken } =
+        useMainContext();
     const [media, setMedia] = useState(null);
     const { getFilesByTag, getMediaById, getMediaUrlByFileName } =
-        useAuthentication();
+        useAuthentication(accessToken);
     useEffect(() => {
         (async () => {
             const tag = `avatar_${userProfile?.user_id ?? ''}`;
